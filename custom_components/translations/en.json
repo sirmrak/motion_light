@@ -1,0 +1,84 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Motion Light",
+        "description": "Motion-based lighting control setup",
+        "data": {
+          "name": "Name",
+          "main_sensors": "Main triggers",
+          "extend_sensors": "Extend sensors (optional)",
+          "switch_entities": "Controlled switches",
+          "lux_sensor": "Illuminance sensor (optional)",
+          "force_stop_sensor": "Force stop sensor (optional)",
+          "force_stop_state": "Force stop sensor state",
+          "log_level": "Log level"
+        }
+      }
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Motion Light Options",
+        "description": "Change integration parameters",
+        "data": {
+          "main_sensors": "Main triggers",
+          "extend_sensors": "Extend sensors (optional)",
+          "switch_entities": "Controlled switches",
+          "lux_sensor": "Illuminance sensor (optional)",
+          "force_stop_sensor": "Force stop sensor (optional)",
+          "force_stop_state": "Force stop sensor state",
+          "log_level": "Log level"
+        }
+      }
+    }
+  },
+  "entity": {
+    "switch": {
+      "motion_light_enabled": {
+        "name": "Control"
+      },
+      "motion_light_priority_manual": {
+        "name": "Manual priority"
+      }
+    },
+    "sensor": {
+      "motion_light_status": {
+        "name": "Status",
+        "state": {
+          "idle": "Idle",
+          "detecting": "Detecting",
+          "on": "On",
+          "delaying": "Delaying",
+          "active": "Extended",
+          "off": "Off",
+          "manual_on": "Manual on",
+          "manual_off_cooldown": "Manual off cooldown",
+          "error": "Error",
+          "disabled": "Disabled"
+        }
+      }
+    },
+    "number": {
+      "motion_light_motion_filter": {
+        "name": "Motion filter"
+      },
+      "motion_light_off_delay": {
+        "name": "Off delay"
+      },
+      "motion_light_lux_threshold": {
+        "name": "Lux threshold"
+      },
+      "motion_light_lux_cooldown": {
+        "name": "Lux cooldown"
+      },
+      "motion_light_manual_idle_timeout": {
+        "name": "'Forgot to turn off' timer"
+      },
+      "motion_light_manual_off_cooldown": {
+        "name": "Manual off cooldown"
+      }
+    }
+  }
+}
