@@ -45,6 +45,7 @@ class MotionLightStatusSensor(CoordinatorEntity, SensorEntity):
             "off": "mdi:lightbulb-off-outline",
             "manual_on": "mdi:hand-back-left",
             "manual_off_cooldown": "mdi:timer-pause",
+            "force_stopped": "mdi:stop-circle-outline", 
             "error": "mdi:alert-circle",
             "disabled": "mdi:lightbulb-off",
         }
