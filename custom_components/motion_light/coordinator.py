@@ -28,6 +28,7 @@ from .const import (
     STATE_OFF,
     STATE_MANUAL_ON,
     STATE_MANUAL_OFF_COOLDOWN,
+    STATE_FORCE_STOPPED,
     STATE_ERROR,
     STATE_DISABLED,
 )
@@ -154,8 +155,6 @@ class MotionLightCoordinator(DataUpdateCoordinator):
     def set_manual_idle_timeout(self, value: float) -> None:
         self.manual_idle_timeout = int(value)
         self.logger.info("Manual idle timeout set to %d sec", self.manual_idle_timeout)
-        
-        # Если таймер уже тикает, а мы изменили значение на 0, нужно его отменить
         if self.manual_idle_timeout <= 0 and self._manual_idle_timer:
             self.logger.info("Manual idle timeout set to 0, cancelling active timer")
             self._manual_idle_timer()
@@ -175,6 +174,15 @@ class MotionLightCoordinator(DataUpdateCoordinator):
         self.logger.info("Switches: %s, Main sensors: %s, Extend sensors: %s, Lux: %s",
                          self.switch_entities, self.main_sensors, self.extend_sensors, self.lux_sensor)
         
+        # Проверяем состояние force_stop_sensor при старте
+        if self.force_stop_sensor:
+            force_stop_state_obj = self.hass.states.get(self.force_stop_sensor)
+            if force_stop_state_obj and force_stop_state_obj.state == self.force_stop_state:
+                self.logger.info("Force stop sensor is already in stop state at startup")
+                await self._update_state(STATE_FORCE_STOPPED)
+                await self._start_listening()
+                return
+
         any_on = any(
             self.hass.states.get(s) and self.hass.states.get(s).state == "on"
             for s in self.switch_entities
@@ -294,6 +302,11 @@ class MotionLightCoordinator(DataUpdateCoordinator):
             self.logger.debug("Integration disabled, ignoring")
             return
 
+        # БЛОКИРОВЩИК: Игнорируем движение, если активна принудительная остановка
+        if self._state == STATE_FORCE_STOPPED:
+            self.logger.debug("Ignoring during force_stopped")
+            return
+
         self.logger.debug("Main sensor ON by %s, current state: %s", triggered_by, self._state)
 
         if self._state == STATE_MANUAL_OFF_COOLDOWN:
@@ -302,7 +315,6 @@ class MotionLightCoordinator(DataUpdateCoordinator):
 
         if self._state == STATE_MANUAL_ON:
             self.logger.debug("During manual_on, resetting idle timer")
-            # ИЗМЕНЕНИЕ: Сбрасываем таймер только если он включен (>0)
             if self.manual_idle_timeout > 0:
                 self._reset_manual_idle_timer()
             return
@@ -394,6 +406,11 @@ class MotionLightCoordinator(DataUpdateCoordinator):
             self.logger.debug("Integration disabled, ignoring")
             return
 
+        # БЛОКИРОВЩИК: Игнорируем движение, если активна принудительная остановка
+        if self._state == STATE_FORCE_STOPPED:
+            self.logger.debug("Ignoring during force_stopped")
+            return
+
         self.logger.debug("Extend sensor ON by %s, current state: %s", triggered_by, self._state)
 
         if self._state == STATE_IDLE:
@@ -406,7 +423,6 @@ class MotionLightCoordinator(DataUpdateCoordinator):
 
         if self._state == STATE_MANUAL_ON:
             self.logger.debug("During manual_on, resetting idle timer")
-            # ИЗМЕНЕНИЕ: Сбрасываем таймер только если он включен (>0)
             if self.manual_idle_timeout > 0:
                 self._reset_manual_idle_timer()
             return
@@ -438,6 +454,11 @@ class MotionLightCoordinator(DataUpdateCoordinator):
     def _target_state_changed(self, event):
         """Handle target switch state change."""
         if not self.respect_manual:
+            return
+
+        # БЛОКИРОВЩИК: Игнорируем ручные переключения, если активна принудительная остановка
+        if self._state == STATE_FORCE_STOPPED:
+            self.logger.debug("Ignoring manual change during force_stopped")
             return
             
         new_state = event.data.get("new_state")
@@ -485,9 +506,27 @@ class MotionLightCoordinator(DataUpdateCoordinator):
         if not new_state:
             return
 
+        # Если датчик перешел в блокирующее состояние
         if new_state.state == self.force_stop_state:
             self.logger.info("Force stop triggered by %s", event.data.get("entity_id"))
-            self.hass.async_create_task(self._force_stop())
+            self.hass.async_create_task(self._enter_force_stop())
+        # Если датчик вышел из блокирующего состояния
+        else:
+            self.logger.info("Force stop released by %s", event.data.get("entity_id"))
+            self.hass.async_create_task(self._exit_force_stop())
+
+    async def _enter_force_stop(self):
+        """Enter force_stopped state."""
+        self.logger.info("Entering force_stopped state")
+        self._cancel_all_timers()
+        if self._state in (STATE_ON, STATE_DELAYING, STATE_ACTIVE, STATE_MANUAL_ON):
+            await self._turn_off_switches()
+        await self._update_state(STATE_FORCE_STOPPED)
+
+    async def _exit_force_stop(self):
+        """Exit force_stopped state to idle."""
+        self.logger.info("Exiting force_stopped state")
+        await self._update_state(STATE_IDLE)
 
     def _is_any_main_sensor_active(self) -> bool:
         """Check if any main sensor is currently in 'on' state."""
@@ -658,11 +697,11 @@ class MotionLightCoordinator(DataUpdateCoordinator):
             self.hass.async_create_task(self._update_state(STATE_IDLE))
 
     async def _turn_on_switches(self) -> None:
-        """Turn on switches with our context."""
+        """Turn on switches/lights with our context."""
         ctx = Context(
             id=f"motion_light_{self.entry.entry_id}_{dt_util.utcnow().timestamp()}"
         )
-        self.logger.info("Turning ON switches: %s", self.switch_entities)
+        self.logger.info("Turning ON entities: %s", self.switch_entities)
         await self.hass.services.async_call(
             "homeassistant",
             "turn_on",
@@ -671,11 +710,11 @@ class MotionLightCoordinator(DataUpdateCoordinator):
         )
 
     async def _turn_off_switches(self) -> None:
-        """Turn off switches with our context."""
+        """Turn off switches/lights with our context."""
         ctx = Context(
             id=f"motion_light_{self.entry.entry_id}_{dt_util.utcnow().timestamp()}"
         )
-        self.logger.info("Turning OFF switches: %s", self.switch_entities)
+        self.logger.info("Turning OFF entities: %s", self.switch_entities)
         await self.hass.services.async_call(
             "homeassistant",
             "turn_off",
@@ -686,7 +725,6 @@ class MotionLightCoordinator(DataUpdateCoordinator):
     async def _enter_manual_on(self):
         """Enter manual_on state."""
         await self._update_state(STATE_MANUAL_ON)
-        # ИЗМЕНЕНИЕ: Запускаем таймер только если он не отключен (не равен 0)
         if self.manual_idle_timeout > 0:
             self._reset_manual_idle_timer()
         else:
@@ -694,7 +732,6 @@ class MotionLightCoordinator(DataUpdateCoordinator):
 
     def _reset_manual_idle_timer(self):
         """Reset manual idle timer."""
-        # ИЗМЕНЕНИЕ: Защита от создания таймера при значении 0
         if self.manual_idle_timeout <= 0:
             return
 
@@ -715,8 +752,8 @@ class MotionLightCoordinator(DataUpdateCoordinator):
         self.hass.async_create_task(self._turn_off_switches_manual())
 
     async def _turn_off_switches_manual(self):
-        """Turn off switches in manual mode."""
-        self.logger.info("Turning OFF switches (manual timeout): %s", self.switch_entities)
+        """Turn off switches/lights in manual mode."""
+        self.logger.info("Turning OFF entities (manual timeout): %s", self.switch_entities)
         await self.hass.services.async_call(
             "homeassistant",
             "turn_off",
@@ -755,14 +792,6 @@ class MotionLightCoordinator(DataUpdateCoordinator):
         self._lux_cooldown_active = False
         self._lux_cooldown_timer = None
         self.logger.info("Lux cooldown expired")
-
-    async def _force_stop(self):
-        """Force stop — turn off switches."""
-        self.logger.info("Force stop called")
-        self._cancel_all_timers()
-        await self._turn_off_switches()
-        await self._update_state(STATE_OFF)
-        async_call_later(self.hass, 1, self._transition_to_idle)
 
     def _cancel_all_timers(self):
         """Cancel all timers."""
