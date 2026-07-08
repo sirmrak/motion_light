@@ -111,6 +111,9 @@ class MotionLightCoordinator(DataUpdateCoordinator):
         attrs["main_sensors"] = self.main_sensors
         attrs["extend_sensors"] = self.extend_sensors
         attrs["lux_sensor"] = self.lux_sensor
+        attrs["force_stop_sensor"] = self.force_stop_sensor
+        attrs["force_stop_state"] = self.force_stop_state
+        attrs["force_stop_active"] = self._state == STATE_FORCE_STOPPED
         attrs["active_main_sensors"] = self._get_active_main_sensors()
         attrs["active_extend_sensors"] = self._get_active_extend_sensors()
         attrs["lux_value"] = self._get_current_lux()
