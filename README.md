@@ -1,5 +1,5 @@
 English | [Русский](README.ru.md)
-# Motion Light
+# <img src="custom_components/motion_light/brand/icon.png" width="64"> </img> Motion Light
 
 A smart, FSM-based custom integration for Home Assistant to control lights based on motion, illuminance (lux), and manual overrides.
 
