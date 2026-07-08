@@ -70,16 +70,23 @@ async def async_setup_entry(
 ) -> None:
     """Set up Motion Light number entities."""
     coordinator = hass.data[DOMAIN][entry.entry_id]
+    
+    lux_sensor = entry.options.get(CONF_LUX_SENSOR) or entry.data.get(CONF_LUX_SENSOR)
+    
     entities = [
         MotionLightNumber(coordinator, entry, ENTITY_MOTION_FILTER, 0, 10, 1, DEFAULT_MOTION_FILTER),
         MotionLightNumber(coordinator, entry, ENTITY_OFF_DELAY, 0, 600, 5, DEFAULT_OFF_DELAY),
-        MotionLightNumber(coordinator, entry, ENTITY_LUX_THRESHOLD, 1, 1000, 10, DEFAULT_LUX_THRESHOLD),
-        MotionLightNumber(coordinator, entry, ENTITY_LUX_COOLDOWN, 0, 300, 5, DEFAULT_LUX_COOLDOWN),
-        MotionLightNumber(coordinator, entry, ENTITY_MANUAL_IDLE_TIMEOUT, 0, 3600, 60, DEFAULT_MANUAL_IDLE_TIMEOUT),
+        MotionLightNumber(coordinator, entry, ENTITY_MANUAL_IDLE_TIMEOUT, 0, 3600, 30, DEFAULT_MANUAL_IDLE_TIMEOUT),
         MotionLightNumber(coordinator, entry, ENTITY_MANUAL_OFF_COOLDOWN, 0, 300, 5, DEFAULT_MANUAL_OFF_COOLDOWN),
     ]
+    
+    if lux_sensor:
+        entities.extend([
+            MotionLightNumber(coordinator, entry, ENTITY_LUX_THRESHOLD, 1, 1000, 10, DEFAULT_LUX_THRESHOLD),
+            MotionLightNumber(coordinator, entry, ENTITY_LUX_COOLDOWN, 0, 300, 5, DEFAULT_LUX_COOLDOWN),
+        ])
+        
     async_add_entities(entities)
-
 
 class MotionLightNumber(CoordinatorEntity, NumberEntity, RestoreEntity):
     """Representation of a Motion Light setting as a number entity."""
