@@ -30,10 +30,10 @@ The integration uses a Finite State Machine (FSM) to manage states. The main sta
 
 During setup, you will be asked to provide:
 - **Main triggers:** Sensors that can turn the light on (e.g., motion sensors).
-- **Extend sensors:** Sensors that only reset the off-delay timer but cannot turn the light on from an idle state.
+- **Extend sensors:** Sensors that only reset the off-delay timer but cannot turn the light on from an idle state (optional).
 - **Controlled switches:** The lights/switches to control.
-- **Illuminance sensor:** Optional sensor to check ambient light levels.
-- **Force stop sensor:** Optional sensor to force the light off.
+- **Illuminance sensor:** Sensor to check ambient light levels (optional).
+- **Force stop sensor:** Optional sensor to force the light off (optional).
 
 ## Entities
 
