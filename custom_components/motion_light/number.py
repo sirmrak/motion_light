@@ -10,6 +10,7 @@ from homeassistant.helpers.restore_state import RestoreEntity
 from homeassistant.helpers.device_registry import DeviceInfo
 from .const import (
     DOMAIN,
+    CONF_LUX_SENSOR,
     ENTITY_MOTION_FILTER,
     ENTITY_OFF_DELAY,
     ENTITY_LUX_THRESHOLD,
