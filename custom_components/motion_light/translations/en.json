@@ -55,6 +55,7 @@
           "off": "Off",
           "manual_on": "Manual on",
           "manual_off_cooldown": "Manual off cooldown",
+          "force_stopped":  "Force stopped",
           "error": "Error",
           "disabled": "Disabled"
         }
