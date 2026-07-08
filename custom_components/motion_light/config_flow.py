@@ -69,7 +69,7 @@ class MotionLightConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             ),
             
             vol.Required(CONF_SWITCH_ENTITIES): selector.EntitySelector(
-                selector.EntitySelectorConfig(domain="switch", multiple=True)
+                selector.EntitySelectorConfig(domain=["switch", "light"], multiple=True)
             ),
             vol.Optional(CONF_LUX_SENSOR): selector.EntitySelector(
                 selector.EntitySelectorConfig(
@@ -143,7 +143,7 @@ class MotionLightOptionsFlow(config_entries.OptionsFlow):
                     CONF_SWITCH_ENTITIES,
                     default=current_data.get(CONF_SWITCH_ENTITIES, []),
                 ): selector.EntitySelector(
-                    selector.EntitySelectorConfig(domain="switch", multiple=True)
+                    selector.EntitySelectorConfig(domain=["switch", "light"], multiple=True)
                 ),
                 vol.Optional(
                     CONF_LUX_SENSOR,
