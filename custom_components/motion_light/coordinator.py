@@ -664,7 +664,7 @@ class MotionLightCoordinator(DataUpdateCoordinator):
         )
         self.logger.info("Turning ON switches: %s", self.switch_entities)
         await self.hass.services.async_call(
-            "switch",
+            "homeassistant",
             "turn_on",
             {"entity_id": self.switch_entities},
             context=ctx,
@@ -677,7 +677,7 @@ class MotionLightCoordinator(DataUpdateCoordinator):
         )
         self.logger.info("Turning OFF switches: %s", self.switch_entities)
         await self.hass.services.async_call(
-            "switch",
+            "homeassistant",
             "turn_off",
             {"entity_id": self.switch_entities},
             context=ctx,
@@ -718,7 +718,7 @@ class MotionLightCoordinator(DataUpdateCoordinator):
         """Turn off switches in manual mode."""
         self.logger.info("Turning OFF switches (manual timeout): %s", self.switch_entities)
         await self.hass.services.async_call(
-            "switch",
+            "homeassistant",
             "turn_off",
             {"entity_id": self.switch_entities},
         )
