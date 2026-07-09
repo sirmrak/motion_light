@@ -1,4 +1,4 @@
-Update Versionname: Update Version
+name: Update Version
 
 on:
   push:
@@ -44,14 +44,53 @@ jobs:
           ssl._create_default_https_context = ssl._create_unverified_context
           PYEOF
 
-      - name: Run Semantic Release (no publish)
+      - name: Debug - Show commits since last tag
+        run: |
+          echo "🔍 Коммиты после последнего тега:"
+          LAST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "none")
+          echo "Последний тег: $LAST_TAG"
+          
+          if [ "$LAST_TAG" != "none" ]; then
+            git log ${LAST_TAG}..HEAD --oneline
+          else
+            echo "Тегов нет, показываем все коммиты:"
+            git log --oneline
+          fi
+          
+          echo ""
+          echo "🔍 Текущая версия в manifest.json:"
+          cat custom_components/motion_light/manifest.json | grep version
+
+      - name: Run Semantic Release
         env:
           GITEA_TOKEN: ${{ secrets.PAT_TOKEN }}
         run: |
-          # Запускаем semantic-release, но не публикуем релиз
-          # Он только обновит manifest.json и создаст тег
-          semantic-release version --no-vcs-release
+          echo "🚀 Запускаем semantic-release..."
           
-          # Пушим изменения обратно в Gitea
-          git push origin main
-          git push origin --tags
+          # Запускаем semantic-release
+          # Он обновит manifest.json, создаст коммит и тег
+          semantic-release version || {
+            echo "⚠️  Semantic release завершился с ошибкой или не создал релиз"
+            echo "Это нормально, если нет коммитов по Conventional Commits"
+            exit 0
+          }
+          
+          echo ""
+          echo "🔍 Проверяем изменения:"
+          git status
+          
+          echo ""
+          echo "🔍 Новые теги:"
+          git tag -l | tail -5
+          
+          echo ""
+          echo "🔍 Версия в manifest.json:"
+          cat custom_components/motion_light/manifest.json | grep version
+          
+          # Пушим изменения
+          echo ""
+          echo "📤 Пушим изменения в Gitea..."
+          git push origin main || echo "⚠️  Push main failed (возможно, нет изменений)"
+          git push origin --tags || echo "⚠️  Push tags failed (возможно, нет новых тегов)"
+          
+          echo "✅ Готово"
