@@ -2,6 +2,14 @@
 
 <!-- version list -->
 
+## v1.0.14 (2026-07-09)
+
+### Bug Fixes
+
+- Удалены переводы атрибутов из custom_components/motion_light/translations
+  ([`563095c`](https://192.168.200.208:3000/sirmrak/motion_light/commit/563095cbcf77d22d02a7176faf5aec6837d18b37))
+
+
 ## v1.0.13 (2026-07-09)
 
 ### Bug Fixes
