@@ -106,4 +106,15 @@ jobs:
       - name: Run Semantic Release
         env:
           GITEA_TOKEN: ${{ secrets.PAT_TOKEN }}
-        run: semantic-release version
+          # Отключаем проверку SSL для Python
+          PYTHONHTTPSVERIFY: "0"
+          CURL_CA_BUNDLE: ""
+          REQUESTS_CA_BUNDLE: ""
+        run: |
+          # Отключаем проверку SSL для Python requests
+          export PYTHONHTTPSVERIFY=0
+          export CURL_CA_BUNDLE=""
+          export REQUESTS_CA_BUNDLE=""
+          
+          # Запускаем semantic-release
+          semantic-release version
