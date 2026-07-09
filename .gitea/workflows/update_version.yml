@@ -13,6 +13,8 @@ jobs:
   update-version:
     name: Update Version
     runs-on: ubuntu-latest
+    # Пропускаем workflow если коммит от бота
+    if: github.actor != 'gitea-actions[bot]' && github.actor != 'Gitea Actions Bot'
     permissions:
       contents: write
     
@@ -40,8 +42,4 @@ jobs:
         env:
           GITEA_TOKEN: ${{ secrets.PAT_TOKEN }}
           PYTHONHTTPSVERIFY: "0"
-          REQUESTS_CA_BUNDLE: ""
-          CURL_CA_BUNDLE: ""
-        run: |
-          echo "🚀 Запускаем semantic-release..."
-          semantic-release version
+        run: semantic-release version
