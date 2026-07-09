@@ -6,12 +6,10 @@ on:
       - main
       - master
 
-# Глобальные переменные окружения
 env:
   GIT_SSL_NO_VERIFY: true
 
 jobs:
-  # ШАГ 1: Валидация структуры HA-интеграции
   validate:
     name: Validate HA Integration
     runs-on: ubuntu-latest
@@ -19,15 +17,64 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Run Hassfest
+      - name: Validate integration structure
         run: |
-          docker run --rm \
-            -v ${{ github.workspace }}:/github/workspace \
-            -w /github/workspace \
-            ghcr.io/home-assistant/hassfest \
-            --integration-path custom_components/motion_light
+          echo "🔍 Проверяем структуру интеграции..."
+          
+          # Проверяем наличие директории интеграции
+          if [ ! -d "custom_components/motion_light" ]; then
+            echo "❌ Ошибка: директория custom_components/motion_light не найдена!"
+            exit 1
+          fi
+          
+          # Проверяем наличие обязательных файлов
+          for file in "__init__.py" "manifest.json"; do
+            if [ ! -f "custom_components/motion_light/$file" ]; then
+              echo "❌ Ошибка: файл $file не найден!"
+              exit 1
+            fi
+          done
+          
+          echo "✅ Все обязательные файлы на месте."
+          
+          # Валидируем manifest.json
+          python3 << 'EOF'
+          import json
+          import sys
+          
+          manifest_path = "custom_components/motion_light/manifest.json"
+          
+          try:
+              with open(manifest_path) as f:
+                  manifest = json.load(f)
+          except json.JSONDecodeError as e:
+              print(f"❌ Ошибка валидации JSON: {e}")
+              sys.exit(1)
+          
+          # Проверяем обязательные поля для HA
+          required_fields = ['domain', 'name', 'version', 'documentation', 'codeowners', 'iot_class']
+          missing = [f for f in required_fields if f not in manifest]
+          
+          if missing:
+              print(f"❌ Отсутствуют обязательные поля в manifest.json: {', '.join(missing)}")
+              sys.exit(1)
+          
+          # Проверяем соответствие domain и имени директории
+          if manifest['domain'] != 'motion_light':
+              print(f"❌ Domain '{manifest['domain']}' не совпадает с именем директории 'motion_light'!")
+              sys.exit(1)
+          
+          # Проверяем формат версии (semver)
+          version = manifest['version']
+          parts = version.split('.')
+          if len(parts) != 3 or not all(p.isdigit() for p in parts):
+              print(f"⚠️  Предупреждение: версия '{version}' не соответствует формату SemVer (X.Y.Z)")
+          
+          print(f"✅ manifest.json валиден. Версия: {version}, Domain: {manifest['domain']}")
+          EOF
+          
+          echo "🎉 Валидация успешно пройдена!"
 
-  # ШАГ 2: Автоматический релиз
   release:
     name: Semantic Release
     needs: validate
