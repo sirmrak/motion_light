@@ -1,0 +1,57 @@
+Update Versionname: Update Version
+
+on:
+  push:
+    branches:
+      - main
+      - master
+
+env:
+  GIT_SSL_NO_VERIFY: true
+
+jobs:
+  update-version:
+    name: Update Version
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.PAT_TOKEN }}
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: pip install python-semantic-release
+
+      - name: Configure Git
+        run: |
+          git config --local user.email "actions@gitea.local"
+          git config --local user.name "Gitea Actions Bot"
+
+      - name: Disable SSL verification
+        run: |
+          SITE_PACKAGES=$(python3 -c "import site; print(site.getsitepackages()[0])")
+          cat > "$SITE_PACKAGES/sitecustomize.py" << 'PYEOF'
+          import ssl
+          ssl._create_default_https_context = ssl._create_unverified_context
+          PYEOF
+
+      - name: Run Semantic Release (no publish)
+        env:
+          GITEA_TOKEN: ${{ secrets.PAT_TOKEN }}
+        run: |
+          # Запускаем semantic-release, но не публикуем релиз
+          # Он только обновит manifest.json и создаст тег
+          semantic-release version --no-vcs-release
+          
+          # Пушим изменения обратно в Gitea
+          git push origin main
+          git push origin --tags
