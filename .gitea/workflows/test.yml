@@ -1,0 +1,31 @@
+name: Test Runner
+
+on:
+  push:
+    branches:
+      - main
+      - master
+
+jobs:
+  test:
+    name: Test Job
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Echo message
+        run: |
+          echo "Hello from Gitea Actions!"
+          echo "Runner is working correctly!"
+          date
+          pwd
+          ls -la
+
+      - name: Test Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Check Python version
+        run: python --version
