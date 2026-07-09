@@ -58,6 +58,22 @@
           "force_stopped":  "Force stopped",
           "error": "Error",
           "disabled": "Disabled"
+        },
+        "attributes": {
+          "switch_entities": "Controlled switches",
+          "main_sensors": "Main triggers",
+          "extend_sensors": "Extend sensors",
+          "lux_sensor": "Illuminance sensor",
+          "force_stop_sensor": "Force stop sensor",
+          "force_stop_state": "Force stop state",
+          "force_stop_active": "Force stop active",
+          "active_main_sensors": "Active main triggers",
+          "active_extend_sensors": "Active extend sensors",
+          "lux_value": "Current illuminance",
+          "lux_cooldown_active": "Lux cooldown active",
+          "lux_check_active": "Lux check active",
+          "triggered_by": "Triggered by",
+          "last_motion_time": "Last motion time"
         }
       }
     },
