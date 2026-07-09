@@ -1,4 +1,4 @@
-"""The Motion Light integration. Test"""
+"""The Motion Light integration."""
 import logging
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
