@@ -2,6 +2,14 @@
 
 <!-- version list -->
 
+## v1.0.7 (2026-07-09)
+
+### Bug Fixes
+
+- Run Semantic Release
+  ([`e10e3e7`](https://192.168.200.208:3000/sirmrak/motion_light/commit/e10e3e7c19c2da63289cd499cca5a5eacee22157))
+
+
 ## v1.0.6 (2026-07-09)
 
 ### Bug Fixes
