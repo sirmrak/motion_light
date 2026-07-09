@@ -103,18 +103,50 @@ jobs:
           git config --local user.email "actions@gitea.local"
           git config --local user.name "Gitea Actions Bot"
 
+      - name: Install Gitea SSL certificate
+        run: |
+          echo "🔐 Устанавливаем SSL сертификат Gitea..."
+          
+          # Убеждаемся, что необходимые пакеты установлены
+          apt-get update -qq
+          apt-get install -y -qq ca-certificates openssl curl > /dev/null 2>&1
+          
+          # Создаем директорию для сертификатов
+          mkdir -p /usr/local/share/ca-certificates
+          
+          # Скачиваем сертификат с сервера Gitea
+          echo "📥 Скачиваем сертификат с 192.168.200.208:3000..."
+          echo | openssl s_client -connect 192.168.200.208:3000 -servername 192.168.200.208 2>/dev/null | openssl x509 > /tmp/gitea.crt
+          
+          # Проверяем, что сертификат получен
+          if [ ! -s /tmp/gitea.crt ]; then
+            echo "❌ Не удалось получить сертификат через openssl, пробуем альтернативный способ..."
+            openssl s_client -showcerts -connect 192.168.200.208:3000 </dev/null 2>/dev/null | openssl x509 -outform PEM > /tmp/gitea.crt
+          fi
+          
+          if [ ! -s /tmp/gitea.crt ]; then
+            echo "❌ Не удалось получить сертификат!"
+            exit 1
+          fi
+          
+          echo "✅ Сертификат получен:"
+          head -3 /tmp/gitea.crt
+          
+          # Копируем в доверенные сертификаты
+          cp /tmp/gitea.crt /usr/local/share/ca-certificates/gitea.crt
+          
+          # Обновляем хранилище сертификатов
+          echo "🔄 Обновляем хранилище сертификатов..."
+          update-ca-certificates
+          
+          echo "✅ Сертификат установлен в доверенные!"
+          ls -la /usr/local/share/ca-certificates/gitea.crt
+          
+          # Тестируем подключение
+          echo "🧪 Тестируем HTTPS подключение..."
+          curl -I https://192.168.200.208:3000 && echo "✅ HTTPS подключение работает!" || echo "⚠️  curl test completed with warnings"
+
       - name: Run Semantic Release
         env:
           GITEA_TOKEN: ${{ secrets.PAT_TOKEN }}
-          # Отключаем проверку SSL для Python
-          PYTHONHTTPSVERIFY: "0"
-          CURL_CA_BUNDLE: ""
-          REQUESTS_CA_BUNDLE: ""
-        run: |
-          # Отключаем проверку SSL для Python requests
-          export PYTHONHTTPSVERIFY=0
-          export CURL_CA_BUNDLE=""
-          export REQUESTS_CA_BUNDLE=""
-          
-          # Запускаем semantic-release
-          semantic-release version
+        run: semantic-release version
