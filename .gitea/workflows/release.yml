@@ -1,0 +1,57 @@
+name: HA Integration Release
+
+on:
+  push:
+    branches:
+      - main
+      - master
+
+# Глобальные переменные окружения
+env:
+  GIT_SSL_NO_VERIFY: true
+
+jobs:
+  # ШАГ 1: Валидация структуры HA-интеграции
+  validate:
+    name: Validate HA Integration
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Hassfest
+        uses: home-assistant/actions/hassfest@master
+
+  # ШАГ 2: Автоматический релиз
+  release:
+    name: Semantic Release
+    needs: validate
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.PAT_TOKEN }}
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: 'pip'
+
+      - name: Install dependencies
+        run: pip install python-semantic-release
+
+      - name: Configure Git
+        run: |
+          git config --local user.email "actions@gitea.local"
+          git config --local user.name "Gitea Actions Bot"
+
+      - name: Run Semantic Release
+        env:
+          GITEA_TOKEN: ${{ secrets.PAT_TOKEN }}
+        run: semantic-release version
