@@ -1,0 +1,17 @@
+[tool.semantic_release]
+# Формат тега (без префикса v, так как в manifest.json версия без v)
+tag_format = "{version}"
+
+# Где обновлять версию
+version_variables = [
+    "custom_components/motion_light/manifest.json:version",
+]
+
+# Настройки коммитов
+[tool.semantic_release.commit_parser_options]
+# Парсер Conventional Commits (по умолчанию)
+
+# Настройки веток
+[tool.semantic_release.branches.main]
+match = "(main|master)"
+prerelease = false
