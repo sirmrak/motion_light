@@ -36,61 +36,46 @@ jobs:
           git config --local user.email "actions@gitea.local"
           git config --local user.name "Gitea Actions Bot"
 
-      - name: Disable SSL verification
-        run: |
-          SITE_PACKAGES=$(python3 -c "import site; print(site.getsitepackages()[0])")
-          cat > "$SITE_PACKAGES/sitecustomize.py" << 'PYEOF'
-          import ssl
-          ssl._create_default_https_context = ssl._create_unverified_context
-          PYEOF
-
-      - name: Debug - Show commits since last tag
-        run: |
-          echo "🔍 Коммиты после последнего тега:"
-          LAST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "none")
-          echo "Последний тег: $LAST_TAG"
-          
-          if [ "$LAST_TAG" != "none" ]; then
-            git log ${LAST_TAG}..HEAD --oneline
-          else
-            echo "Тегов нет, показываем все коммиты:"
-            git log --oneline
-          fi
-          
-          echo ""
-          echo "🔍 Текущая версия в manifest.json:"
-          cat custom_components/motion_light/manifest.json | grep version
-
-      - name: Run Semantic Release
+      - name: Install Gitea certificate and run semantic-release
         env:
           GITEA_TOKEN: ${{ secrets.PAT_TOKEN }}
+          REQUESTS_CA_BUNDLE: /etc/ssl/certs/gitea-ca-bundle.crt
+          CURL_CA_BUNDLE: /etc/ssl/certs/gitea-ca-bundle.crt
         run: |
+          echo "🔐 Получаем SSL сертификат Gitea..."
+          
+          echo | openssl s_client -connect 192.168.200.208:3000 -servername 192.168.200.208 2>/dev/null | openssl x509 > /tmp/gitea.crt
+          
+          if [ ! -s /tmp/gitea.crt ]; then
+            echo "❌ Не удалось получить сертификат!"
+            exit 1
+          fi
+          
+          echo "✅ Сертификат получен"
+          
+          cat /etc/ssl/certs/ca-certificates.crt /tmp/gitea.crt > /etc/ssl/certs/gitea-ca-bundle.crt
+          
+          echo "✅ CA bundle создан"
+          
+          CERTIFI_PATH=$(python3 -c "import certifi; print(certifi.where())")
+          echo "certifi path: $CERTIFI_PATH"
+          cat "$CERTIFI_PATH" /tmp/gitea.crt > /tmp/certifi-with-gitea.crt
+          cp /tmp/certifi-with-gitea.crt "$CERTIFI_PATH"
+          
+          echo "✅ Сертификат добавлен в certifi"
+          
+          python3 -c "
+          import requests
+          import os
+          os.environ['REQUESTS_CA_BUNDLE'] = '/etc/ssl/certs/gitea-ca-bundle.crt'
+          try:
+              r = requests.get('https://192.168.200.208:3000')
+              print(f'✅ HTTPS подключение работает! Status: {r.status_code}')
+          except Exception as e:
+              print(f'❌ Ошибка: {e}')
+              exit(1)
+          "
+          
+          echo ""
           echo "🚀 Запускаем semantic-release..."
-          
-          # Запускаем semantic-release
-          # Он обновит manifest.json, создаст коммит и тег
-          semantic-release version || {
-            echo "⚠️  Semantic release завершился с ошибкой или не создал релиз"
-            echo "Это нормально, если нет коммитов по Conventional Commits"
-            exit 0
-          }
-          
-          echo ""
-          echo "🔍 Проверяем изменения:"
-          git status
-          
-          echo ""
-          echo "🔍 Новые теги:"
-          git tag -l | tail -5
-          
-          echo ""
-          echo "🔍 Версия в manifest.json:"
-          cat custom_components/motion_light/manifest.json | grep version
-          
-          # Пушим изменения
-          echo ""
-          echo "📤 Пушим изменения в Gitea..."
-          git push origin main || echo "⚠️  Push main failed (возможно, нет изменений)"
-          git push origin --tags || echo "⚠️  Push tags failed (возможно, нет новых тегов)"
-          
-          echo "✅ Готово"
+          semantic-release version
