@@ -2,6 +2,14 @@
 
 <!-- version list -->
 
+## v1.0.6 (2026-07-09)
+
+### Bug Fixes
+
+- Disable SSL verification for semantic-release
+  ([`ae301f2`](https://192.168.200.208:3000/sirmrak/motion_light/commit/ae301f25db468e56f9378582215b4dac6979722e))
+
+
 ## v1.0.5 (2026-07-09)
 
 ### Bug Fixes
