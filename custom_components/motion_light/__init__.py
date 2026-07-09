@@ -45,5 +45,3 @@ async def _async_update_listener(hass: HomeAssistant, entry: ConfigEntry) -> Non
     """Handle options update."""
     _LOGGER.info("Options updated, reloading Motion Light '%s'", entry.title)
     await hass.config_entries.async_reload(entry.entry_id)
-
-    #Test
