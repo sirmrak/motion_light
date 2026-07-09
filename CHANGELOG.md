@@ -2,6 +2,14 @@
 
 <!-- version list -->
 
+## v1.0.8 (2026-07-09)
+
+### Bug Fixes
+
+- Тестовый релиз
+  ([`11bf318`](https://192.168.200.208:3000/sirmrak/motion_light/commit/11bf31885eb113d02cf5c1558446a4671c1dc202))
+
+
 ## v1.0.7 (2026-07-09)
 
 ### Bug Fixes
