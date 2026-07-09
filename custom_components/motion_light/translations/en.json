@@ -1,101 +1,85 @@
 {
-  "config": {
-    "step": {
-      "user": {
-        "title": "Motion Light",
-        "description": "Motion-based lighting control setup",
-        "data": {
-          "name": "Name",
-          "main_sensors": "Main triggers",
-          "extend_sensors": "Extend sensors (optional)",
-          "switch_entities": "Controlled switches",
-          "lux_sensor": "Illuminance sensor (optional)",
-          "force_stop_sensor": "Force stop sensor (optional)",
-          "force_stop_state": "Force stop sensor state",
-          "log_level": "Log level"
+    "config": {
+        "step": {
+            "user": {
+                "title": "Motion Light",
+                "description": "Настройка управления освещением по движению",
+                "data": {
+                    "name": "Название",
+                    "main_sensors": "Главные триггеры",
+                    "extend_sensors": "Датчики продления (опционально)",
+                    "switch_entities": "Управляемые выключатели",
+                    "lux_sensor": "Датчик освещённости (опционально)",
+                    "force_stop_sensor": "Датчик принудительной остановки (опционально)",
+                    "force_stop_state": "Состояние датчика принудительной остановки",
+                    "log_level": "Уровень логирования"
+                }
+            }
         }
-      }
-    }
-  },
-  "options": {
-    "step": {
-      "init": {
-        "title": "Motion Light Options",
-        "description": "Change integration parameters",
-        "data": {
-          "main_sensors": "Main triggers",
-          "extend_sensors": "Extend sensors (optional)",
-          "switch_entities": "Controlled switches",
-          "lux_sensor": "Illuminance sensor (optional)",
-          "force_stop_sensor": "Force stop sensor (optional)",
-          "force_stop_state": "Force stop sensor state",
-          "log_level": "Log level"
-        }
-      }
-    }
-  },
-  "entity": {
-    "switch": {
-      "motion_light_enabled": {
-        "name": "Control"
-      },
-      "motion_light_priority_manual": {
-        "name": "Manual priority"
-      }
     },
-    "sensor": {
-      "motion_light_status": {
-        "name": "Status",
-        "state": {
-          "idle": "Idle",
-          "detecting": "Detecting",
-          "on": "On",
-          "delaying": "Delaying",
-          "active": "Extended",
-          "off": "Off",
-          "manual_on": "Manual on",
-          "manual_off_cooldown": "Manual off cooldown",
-          "force_stopped":  "Force stopped",
-          "error": "Error",
-          "disabled": "Disabled"
+    "options": {
+        "step": {
+            "init": {
+                "title": "Настройки Motion Light",
+                "description": "Изменение параметров интеграции",
+                "data": {
+                    "main_sensors": "Главные триггеры",
+                    "extend_sensors": "Датчики продления (опционально)",
+                    "switch_entities": "Управляемые выключатели",
+                    "lux_sensor": "Датчик освещённости (опционально)",
+                    "force_stop_sensor": "Датчик принудительной остановки (опционально)",
+                    "force_stop_state": "Состояние датчика принудительной остановки",
+                    "log_level": "Уровень логирования"
+                }
+            }
+        }
+    },
+    "entity": {
+        "switch": {
+            "motion_light_enabled": {
+                "name": "Управление"
+            },
+            "motion_light_priority_manual": {
+                "name": "Приоритет ручного"
+            }
         },
-        "attributes": {
-          "switch_entities": "Controlled switches",
-          "main_sensors": "Main triggers",
-          "extend_sensors": "Extend sensors",
-          "lux_sensor": "Illuminance sensor",
-          "force_stop_sensor": "Force stop sensor",
-          "force_stop_state": "Force stop state",
-          "force_stop_active": "Force stop active",
-          "active_main_sensors": "Active main triggers",
-          "active_extend_sensors": "Active extend sensors",
-          "lux_value": "Current illuminance",
-          "lux_cooldown_active": "Lux cooldown active",
-          "lux_check_active": "Lux check active",
-          "triggered_by": "Triggered by",
-          "last_motion_time": "Last motion time"
+        "sensor": {
+            "motion_light_status": {
+                "name": "Статус",
+                "state": {
+                    "idle": "Ожидание",
+                    "detecting": "Обнаружение",
+                    "on": "Включено",
+                    "delaying": "Задержка выключения",
+                    "active": "Продлено",
+                    "off": "Выключено",
+                    "manual_on": "Ручное включение",
+                    "manual_off_cooldown": "Пауза после ручного выкл.",
+                    "force_stopped": "Принудительная остановка",
+                    "error": "Ошибка",
+                    "disabled": "Отключено"
+                }
+            }
+        },
+        "number": {
+            "motion_light_motion_filter": {
+                "name": "Фильтр движения"
+            },
+            "motion_light_off_delay": {
+                "name": "Задержка выключения"
+            },
+            "motion_light_lux_threshold": {
+                "name": "Порог освещённости"
+            },
+            "motion_light_lux_cooldown": {
+                "name": "Cooldown люкса"
+            },
+            "motion_light_manual_idle_timeout": {
+                "name": "Таймер 'забыл выключить'"
+            },
+            "motion_light_manual_off_cooldown": {
+                "name": "Cooldown ручного выкл."
+            }
         }
-      }
-    },
-    "number": {
-      "motion_light_motion_filter": {
-        "name": "Motion filter"
-      },
-      "motion_light_off_delay": {
-        "name": "Off delay"
-      },
-      "motion_light_lux_threshold": {
-        "name": "Lux threshold"
-      },
-      "motion_light_lux_cooldown": {
-        "name": "Lux cooldown"
-      },
-      "motion_light_manual_idle_timeout": {
-        "name": "'Forgot to turn off' timer"
-      },
-      "motion_light_manual_off_cooldown": {
-        "name": "Manual off cooldown"
-      }
     }
-  }
 }
