@@ -19,8 +19,13 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Hassfest
-        uses: home-assistant/actions/hassfest@master
+      - name: Run Hassfest
+        run: |
+          docker run --rm \
+            -v ${{ github.workspace }}:/github/workspace \
+            -w /github/workspace \
+            ghcr.io/home-assistant/hassfest \
+            --integration-path custom_components/motion_light
 
   # ШАГ 2: Автоматический релиз
   release:
