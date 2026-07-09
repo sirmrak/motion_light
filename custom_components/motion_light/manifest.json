@@ -1,7 +1,7 @@
 {
   "domain": "motion_light",
   "name": "Motion Light",
-  "version": "1.0.2",
+  "version": "1.0.4",
   "documentation": "https://github.com/sirmrak/motion_light",
   "issue_tracker": "https://github.com/sirmrak/motion_light/issues",
   "dependencies": [],
