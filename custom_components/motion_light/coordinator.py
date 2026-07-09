@@ -603,6 +603,11 @@ class MotionLightCoordinator(DataUpdateCoordinator):
             LUX_CHECK_INTERVAL,
             self._check_lux_periodically,
         )
+        
+        self.async_set_updated_data({
+            "state": self._state,
+            "attributes": self.attributes,
+        })
 
     def _stop_lux_check_timer(self):
         """Stop periodic lux check timer."""
@@ -610,7 +615,10 @@ class MotionLightCoordinator(DataUpdateCoordinator):
             self.logger.debug("Stopping lux check timer")
             self._lux_check_timer()
             self._lux_check_timer = None
-
+            self.async_set_updated_data({
+                "state": self._state,
+                "attributes": self.attributes,
+            })
     @callback
     def _check_lux_periodically(self, _=None):
         """Check lux periodically."""
@@ -795,7 +803,11 @@ class MotionLightCoordinator(DataUpdateCoordinator):
         self._lux_cooldown_active = False
         self._lux_cooldown_timer = None
         self.logger.info("Lux cooldown expired")
-
+        self.async_set_updated_data({
+            "state": self._state,
+            "attributes": self.attributes,
+        })
+        
     def _cancel_all_timers(self):
         """Cancel all timers."""
         if self._motion_detect_timer:
