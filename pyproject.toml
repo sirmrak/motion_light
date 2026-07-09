@@ -7,6 +7,9 @@ version_variables = [
 
 commit_message = "chore(release): v{version}"
 
+# ВАЖНО: не создавать релиз через API
+upload_to_vcs_release = false
+
 [tool.semantic_release.branches.main]
 match = "(main|master)"
 prerelease = false
