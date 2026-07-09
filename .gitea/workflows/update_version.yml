@@ -13,7 +13,6 @@ jobs:
   update-version:
     name: Update Version
     runs-on: ubuntu-latest
-    # Пропускаем workflow если коммит от бота
     if: github.actor != 'gitea-actions[bot]' && github.actor != 'Gitea Actions Bot'
     permissions:
       contents: write
@@ -42,4 +41,11 @@ jobs:
         env:
           GITEA_TOKEN: ${{ secrets.PAT_TOKEN }}
           PYTHONHTTPSVERIFY: "0"
-        run: semantic-release version
+        run: |
+          echo "🧹 Сбрасываем конфликтующие переменные Gitea Actions..."
+          unset GITHUB_SERVER_URL
+          unset GITHUB_API_URL
+          unset GITHUB_REPOSITORY
+          
+          echo "🚀 Запускаем semantic-release..."
+          semantic-release version
