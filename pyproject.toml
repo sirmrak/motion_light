@@ -1,17 +1,30 @@
 [tool.semantic_release]
-# Формат тега (без префикса v, так как в manifest.json версия без v)
-tag_format = "{version}"
+# Формат тега С префиксом v (для совместимости с существующими тегами)
+tag_format = "v{version}"
 
-# Где обновлять версию
+# Где обновлять версию при релизе
 version_variables = [
     "custom_components/motion_light/manifest.json:version",
 ]
 
-# Настройки коммитов
-[tool.semantic_release.commit_parser_options]
-# Парсер Conventional Commits (по умолчанию)
+# Сообщение коммита
+commit_message = "chore(release): v{version}"
+
+# Настройки для Gitea
+[tool.semantic_release.remote]
+type = "gitea"
+# URL вашей Gitea (без trailing slash)
+domain = "https://192.168.200.208:3000"
+# Имя пользователя и репозитория
+api_path = "/api/v1"
 
 # Настройки веток
 [tool.semantic_release.branches.main]
 match = "(main|master)"
 prerelease = false
+
+# Настройки парсера коммитов
+[tool.semantic_release.commit_parser_options]
+allowed_tags = ["feat", "fix", "docs", "style", "refactor", "perf", "test", "chore", "revert"]
+minor_tags = ["feat"]
+patch_tags = ["fix", "perf"]
