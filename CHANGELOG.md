@@ -2,6 +2,14 @@
 
 <!-- version list -->
 
+## v1.0.11 (2026-07-09)
+
+### Bug Fixes
+
+- Test
+  ([`15dd7e3`](https://192.168.200.208:3000/sirmrak/motion_light/commit/15dd7e3880dad782f502eb70db6aa8ca23f803bc))
+
+
 ## v1.0.10 (2026-07-09)
 
 ### Bug Fixes
