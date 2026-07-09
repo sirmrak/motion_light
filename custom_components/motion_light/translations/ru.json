@@ -58,6 +58,22 @@
           "force_stopped":  "Принудительная остановка",
           "error": "Ошибка",
           "disabled": "Отключено"
+        },
+        "attributes": {
+          "switch_entities": "Управляемые выключатели",
+          "main_sensors": "Главные триггеры",
+          "extend_sensors": "Датчики продления",
+          "lux_sensor": "Датчик освещённости",
+          "force_stop_sensor": "Датчик принудительной остановки",
+          "force_stop_state": "Состояние принудительной остановки",
+          "force_stop_active": "Принудительная остановка активна",
+          "active_main_sensors": "Активные главные триггеры",
+          "active_extend_sensors": "Активные датчики продления",
+          "lux_value": "Текущая освещённость",
+          "lux_cooldown_active": "Cooldown люкса активен",
+          "lux_check_active": "Проверка люкса активна",
+          "triggered_by": "Активировано",
+          "last_motion_time": "Последнее движение"
         }
       }
     },
