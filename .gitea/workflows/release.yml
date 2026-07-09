@@ -149,4 +149,12 @@ jobs:
       - name: Run Semantic Release
         env:
           GITEA_TOKEN: ${{ secrets.PAT_TOKEN }}
-        run: semantic-release version
+          # Указываем Python использовать системные сертификаты
+          REQUESTS_CA_BUNDLE: /etc/ssl/certs/ca-certificates.crt
+          CURL_CA_BUNDLE: /etc/ssl/certs/ca-certificates.crt
+        run: |
+          # Дополнительно обновляем certifi, чтобы он использовал системные сертификаты
+          python3 -c "import certifi; import shutil; shutil.copy('/etc/ssl/certs/ca-certificates.crt', certifi.where())"
+          
+          # Запускаем semantic-release
+          semantic-release version
