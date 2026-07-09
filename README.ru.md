@@ -1,5 +1,5 @@
 [English](README.md) | Русский
-# <img src="custom_components/motion_light/brand/icon.png" width="64"> </img> Motion Light
+# <img src="custom_components/motion_light/brand/icon.png" width="32"> </img> Motion Light
 
 Умная интеграция для Home Assistant на основе конечного автомата (FSM) для управления освещением по датчикам движения, освещенности и ручным переключениям.
 
