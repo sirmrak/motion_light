@@ -5,7 +5,9 @@ on:
     branches:
       - main
       - master
-
+env:
+  GIT_SSL_NO_VERIFY: true
+  
 jobs:
   test:
     name: Test Job
