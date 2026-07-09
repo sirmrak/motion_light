@@ -1,12 +1,12 @@
 {
-  "domain": "motion_light",
-  "name": "Motion Light",
-  "version": "1.0.13",
-  "documentation": "https://github.com/sirmrak/motion_light",
-  "issue_tracker": "https://github.com/sirmrak/motion_light/issues",
-  "dependencies": [],
-  "codeowners": ["@sirmrak"],
-  "requirements": [],
-  "iot_class": "local_push",
-  "config_flow": true
+    "domain": "motion_light",
+    "name": "Motion Light",
+    "codeowners": ["@sirmrak"],
+    "config_flow": true,
+    "dependencies": [],
+    "documentation": "https://github.com/sirmrak/motion_light",
+    "iot_class": "local_push",
+    "issue_tracker": "https://github.com/sirmrak/motion_light/issues",
+    "requirements": [],
+    "version": "1.0.13"
 }
