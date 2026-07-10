@@ -619,6 +619,20 @@ class MotionLightCoordinator(DataUpdateCoordinator):
                 "state": self._state,
                 "attributes": self.attributes,
             })
+
+    def _cancel_lux_cooldown(self):
+        """Cancel lux cooldown when light is turned on."""
+        if self._lux_cooldown_active:
+            self.logger.debug("Cancelling lux cooldown")
+            self._lux_cooldown_active = False
+            if self._lux_cooldown_timer:
+                self._lux_cooldown_timer()
+                self._lux_cooldown_timer = None
+            self.async_set_updated_data({
+                "state": self._state,
+                "attributes": self.attributes,
+            })   
+            
     @callback
     def _check_lux_periodically(self, _=None):
         """Check lux periodically."""
@@ -655,7 +669,8 @@ class MotionLightCoordinator(DataUpdateCoordinator):
         if not self._is_any_sensor_active():
             self.logger.debug("No sensors active, not turning on")
             return
-
+        
+        self._cancel_lux_cooldown() 
         triggered_by = self._attributes.get("triggered_by")
         await self._turn_on_switches()
         await self._update_state(STATE_ON, triggered_by=triggered_by)
@@ -670,7 +685,7 @@ class MotionLightCoordinator(DataUpdateCoordinator):
             await self._update_state(STATE_IDLE)
             self._start_lux_check_timer()
             return
-
+        self._cancel_lux_cooldown()
         triggered_by = self._attributes.get("triggered_by")
         await self._turn_on_switches()
         await self._update_state(STATE_ON, triggered_by=triggered_by)
@@ -735,6 +750,7 @@ class MotionLightCoordinator(DataUpdateCoordinator):
 
     async def _enter_manual_on(self):
         """Enter manual_on state."""
+        self._cancel_lux_cooldown()
         await self._update_state(STATE_MANUAL_ON)
         if self.manual_idle_timeout > 0:
             self._reset_manual_idle_timer()
