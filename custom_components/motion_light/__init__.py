@@ -1,4 +1,4 @@
-"""The Motion Light integration. Без превода атрибутов для локализации"""
+"""The Motion Light integration."""
 import logging
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
