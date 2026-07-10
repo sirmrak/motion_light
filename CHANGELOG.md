@@ -2,6 +2,14 @@
 
 <!-- version list -->
 
+## v1.0.15 (2026-07-10)
+
+### Bug Fixes
+
+- Lux_cooldown_active
+  ([`342a983`](https://192.168.200.208:3000/sirmrak/motion_light/commit/342a98327d2297977323e12f84e0dc9bc8b3a49d))
+
+
 ## v1.0.14 (2026-07-09)
 
 ### Bug Fixes
