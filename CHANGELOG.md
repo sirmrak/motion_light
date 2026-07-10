@@ -2,6 +2,14 @@
 
 <!-- version list -->
 
+## v1.0.16 (2026-07-10)
+
+### Bug Fixes
+
+- Test new secrets
+  ([`eae1c9c`](https://192.168.200.208:3000/sirmrak/motion_light/commit/eae1c9cef21aa9285a6e5b2174949b6bf2942154))
+
+
 ## v1.0.15 (2026-07-10)
 
 ### Bug Fixes
