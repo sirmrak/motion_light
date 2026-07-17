@@ -2,6 +2,14 @@
 
 <!-- version list -->
 
+## v1.0.17 (2026-07-17)
+
+### Bug Fixes
+
+- Test
+  ([`31237e7`](https://git.darkmode.duckdns.org/sirmrak/motion_light/commit/31237e76d9c770dae4e04fad6d7a0196340a60c5))
+
+
 ## v1.0.16 (2026-07-10)
 
 ### Bug Fixes
