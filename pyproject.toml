@@ -7,13 +7,13 @@ version_variables = [
 
 commit_message = "chore(release): v{version}"
 
-# ВАЖНО: не создаём релиз в Gitea (релиз будет в GitHub)
+# Отключаем создание релиза через API Gitea (релиз будет создаваться в GitHub)
 upload_to_vcs_release = false
 
 [tool.semantic_release.remote]
 type = "gitea"
-domain = "192.168.200.208:3000"
-api_domain = "192.168.200.208:3000"
+domain = "git.darkmode.duckdns.org"
+api_domain = "git.darkmode.duckdns.org"
 
 [tool.semantic_release.branches.main]
 match = "(main|master)"
