@@ -389,7 +389,23 @@ class MotionLightCoordinator(DataUpdateCoordinator):
             self._cancel_timer("_lux_cooldown_timer")
             self._lux_cooldown_timer = async_call_later(self.hass, self.lux_cooldown, self._lux_cooldown_expired)
             self.async_set_updated_data({"state": self._state, "attributes": self.attributes})
-
+    
+    def _start_lux_cooldown(self):
+        """Start lux cooldown after turning off lights."""
+        self._lux_cooldown_active = True
+        if self.lux_cooldown > 0:
+            if self._lux_cooldown_timer:
+                self._lux_cooldown_timer()
+            self._lux_cooldown_timer = async_call_later(
+                self.hass,
+                self.lux_cooldown,
+                self._lux_cooldown_expired,
+            )
+            self.logger.info("Lux cooldown started for %d sec", self.lux_cooldown)
+            self.async_set_updated_data({
+                "state": self._state,
+                "attributes": self.attributes,
+            })
     def _cancel_lux_cooldown(self):
         if self._lux_cooldown_active:
             self._lux_cooldown_active = False
@@ -433,7 +449,7 @@ class MotionLightCoordinator(DataUpdateCoordinator):
             await self._update_state(STATE_ON)
             return
         await self._turn_off_switches()
-        await self._start_lux_cooldown()
+        self._start_lux_cooldown()
         await self._update_state(STATE_OFF)
         async_call_later(self.hass, 1, self._transition_to_idle)
 
@@ -469,12 +485,12 @@ class MotionLightCoordinator(DataUpdateCoordinator):
 
     async def _turn_off_switches_manual(self):
         await self.hass.services.async_call("homeassistant", "turn_off", {"entity_id": self.switch_entities})
-        await self._start_lux_cooldown()
+        self._start_lux_cooldown()
         await self._update_state(STATE_OFF)
         async_call_later(self.hass, 1, self._transition_to_idle)
 
     async def _enter_manual_off_cooldown(self):
-        await self._start_lux_cooldown()
+        self._start_lux_cooldown()
         await self._update_state(STATE_MANUAL_OFF_COOLDOWN)
         if self.manual_off_cooldown > 0:
             self._start_timer("_manual_off_cooldown_timer", self.manual_off_cooldown, self._manual_off_cooldown_expired)
