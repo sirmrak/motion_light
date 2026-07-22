@@ -2,6 +2,14 @@
 
 <!-- version list -->
 
+## v1.1.0-beta.1 (2026-07-22)
+
+### Features
+
+- Add dev branch for beta releases
+  ([`fa4d133`](https://git.darkmode.duckdns.org/sirmrak/motion_light/commit/fa4d133d50e896428883919c98ef830780aacce2))
+
+
 ## v1.0.17 (2026-07-17)
 
 ### Bug Fixes
