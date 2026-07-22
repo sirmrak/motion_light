@@ -2,6 +2,14 @@
 
 <!-- version list -->
 
+## v1.2.0-beta.2 (2026-07-22)
+
+### Bug Fixes
+
+- Dev update
+  ([`569f49a`](https://git.darkmode.duckdns.org/sirmrak/motion_light/commit/569f49a47072fdb9a7797d16e6670865360c71c1))
+
+
 ## v1.2.0-beta.1 (2026-07-22)
 
 ### Features
