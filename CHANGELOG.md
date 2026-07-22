@@ -2,6 +2,14 @@
 
 <!-- version list -->
 
+## v1.2.0-beta.3 (2026-07-22)
+
+### Bug Fixes
+
+- Await self._start_lux_cooldown()
+  ([`9178687`](https://git.darkmode.duckdns.org/sirmrak/motion_light/commit/9178687d8a74a5a0e537f14dcd828c03ca7da490))
+
+
 ## v1.2.0-beta.2 (2026-07-22)
 
 ### Bug Fixes
