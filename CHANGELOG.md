@@ -2,6 +2,14 @@
 
 <!-- version list -->
 
+## v1.2.0-beta.1 (2026-07-22)
+
+### Features
+
+- Major FSM improvements, optimization and bug fixes
+  ([`3d5fd50`](https://git.darkmode.duckdns.org/sirmrak/motion_light/commit/3d5fd50c951c3e255e3dc73ea9f1cec87da879fe))
+
+
 ## v1.1.0 (2026-07-22)
 
 
