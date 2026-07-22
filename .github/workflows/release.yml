@@ -113,7 +113,7 @@ jobs:
           echo "commits<<EOF" >> $GITHUB_OUTPUT
           echo "$COMMITS" >> $GITHUB_OUTPUT
           echo "EOF" >> $GITHUB_OUTPUT
-
+      
       - name: Create GitHub Release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -123,11 +123,15 @@ jobs:
           IS_BETA="${{ steps.tag.outputs.is_beta }}"
           
           echo "🚀 Создаём релиз $TAG в GitHub..."
+          echo "Тип релиза: IS_BETA=$IS_BETA"
           
+          # Определяем заголовок
           if [ "$IS_BETA" = "true" ]; then
             TITLE="Beta Release $TAG"
+            PRERELEASE_FLAG="--prerelease"
           else
             TITLE="Release $TAG"
+            PRERELEASE_FLAG=""
           fi
           
           cat > /tmp/release_notes.md << EOF
@@ -136,10 +140,18 @@ jobs:
           $COMMITS
           EOF
           
-          gh release create "$TAG" \
-            --title "$TITLE" \
-            --notes-file /tmp/release_notes.md \
-            --target main \
-            ${IS_BETA:+--prerelease}
+          # Создаём релиз
+          if [ -n "$PRERELEASE_FLAG" ]; then
+            gh release create "$TAG" \
+              --title "$TITLE" \
+              --notes-file /tmp/release_notes.md \
+              --target main \
+              --prerelease
+          else
+            gh release create "$TAG" \
+              --title "$TITLE" \
+              --notes-file /tmp/release_notes.md \
+              --target main
+          fi
           
           echo "✅ Релиз создан!"

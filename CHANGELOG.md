@@ -2,7 +2,14 @@
 
 <!-- version list -->
 
-## v1.2.0 (2026-07-22)
+
+## v1.2.0-beta.4 (2026-07-22)
+
+### Bug Fixes
+
+- Correct prerelease detection in GitHub workflow
+  ([`5e52428`](https://git.darkmode.duckdns.org/sirmrak/motion_light/commit/5e5242888af5d66e20e95156ac846d7f650a23e3))
+>>>>>>> dev
 
 
 ## v1.2.0-beta.3 (2026-07-22)
