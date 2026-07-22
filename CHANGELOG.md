@@ -2,6 +2,30 @@
 
 <!-- version list -->
 
+## v1.2.0-beta.3 (2026-07-22)
+
+### Bug Fixes
+
+- Await self._start_lux_cooldown()
+  ([`9178687`](https://git.darkmode.duckdns.org/sirmrak/motion_light/commit/9178687d8a74a5a0e537f14dcd828c03ca7da490))
+
+
+## v1.2.0-beta.2 (2026-07-22)
+
+### Bug Fixes
+
+- Dev update
+  ([`569f49a`](https://git.darkmode.duckdns.org/sirmrak/motion_light/commit/569f49a47072fdb9a7797d16e6670865360c71c1))
+
+
+## v1.2.0-beta.1 (2026-07-22)
+
+### Features
+
+- Major FSM improvements, optimization and bug fixes
+  ([`3d5fd50`](https://git.darkmode.duckdns.org/sirmrak/motion_light/commit/3d5fd50c951c3e255e3dc73ea9f1cec87da879fe))
+
+
 ## v1.1.0 (2026-07-22)
 
 
